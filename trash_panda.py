@@ -4,7 +4,7 @@ import csv
 import sys,getopt
 import os
 
-
+#Testing push
 class Read_Format_input:
     def __init__(self, reference_file, input_file):
         self.reference_file = reference_file
@@ -13,19 +13,19 @@ class Read_Format_input:
     def reader(self):
         read_reference = pd.read_csv(self.reference_file, sep=('\t'))
         read_input = pd.read_csv(self.input_file, sep=('\t'))
-       
+
         read_input.columns = ['AccNum','Run', 'AlleleLength']
         #For comparison, you want the reference and input file to have the same columns names for when you merge, so rename the columns specified
         #Ex: read_input.rename(columns={'AlleleLength':'length'}, inplace = True)
         read_input.rename(columns={'AlleleLength':'Length'})
-       
+
         #Filter columns you may want to seperate from the original dataframe.
         #Example df_reference = read_reference[['Gene', 'Run']]
         df_reference = read_reference[['AccNum', 'Run']]
         df_input = read_input[['AccNum', 'Run']]
-       
+
         df_reference_formated, df_input_formated = self.formating(df_reference, df_input)
-       
+
         return (df_reference_formated, df_input_formated)
 
     def formating(self, df_reference, df_input):
@@ -33,7 +33,7 @@ class Read_Format_input:
         df_reference.loc[:,'Run'] = df_reference.Run.apply(lambda x:int(x))
         df_input.loc[:,'Run'] = df_input.Run.str.strip('Run:')
         df_input.loc[:,'Run'] = df_input.Run.apply(lambda x:int(x))
-       
+
         df_reference_sorted = df_reference.sort_values(by=['AccNum','Run'], inplace = False)
         df_input_sorted = df_input.sort_values(by=['AccNum','Run'], inplace = False)
 
@@ -47,7 +47,7 @@ class Iteration_Index:
             #You can add some function after this or specify a different way to index through the dataframe.
             df_reference_sorted.ix[i, 'AccNum'] = Annotate.add_annotation(ref_row_1,ref_row_2)
 
-       
+
         for i in df_input_sorted.index[:-1]:
             in_row_1 = df_input_sorted.ix[i]
             in_row_2 = df_input_sorted.ix[i+1]
@@ -69,7 +69,7 @@ class Merger:
     def merging_sort(self, df_reference_merging, df_input_merging):
         merged_df = df_reference_merging.merge(df_input_merging, left_on = 'AccNum', right_on = 'AccNum', how = 'inner')
         merged_df_sorted = merged_df.sort_values(by = ['AccNum'], inplace = False)
-       
+
         return merged_df_sorted
 
 class Validate:
